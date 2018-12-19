@@ -11,11 +11,11 @@ namespace AO.BookKeeping.Data
         public int OrderId { get; set; }
         public string UserPresentationName { get; set; }
         public string UserEmailAddress { get; set; }
-        public DateTime InvoiceDate { get; set; }
-        public DateTime PaymentDate { get; set; }
-        public decimal DiscountAmount { get; set; }
-        public decimal ShipmentCost { get; set; }
-        public decimal Vat { get; set; }
-        public decimal TotalPrice { get; set; }
+        public DateTime? InvoiceDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public decimal? ShipmentCost { get; set; }
+        public decimal? Vat { get; set; }
+        public decimal? TotalPrice { get; set; }
     }
 }

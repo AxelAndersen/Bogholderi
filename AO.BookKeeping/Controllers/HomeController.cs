@@ -1,22 +1,25 @@
-﻿using System;
+﻿using AO.BookKeeping.Data;
+using AO.BookKeeping.Data.Contexts;
+using AO.BookKeeping.Models;
+using AO.BookKeeping.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using AO.BookKeeping.Models;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using System.Text;
-using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-using AO.BookKeeping.Services;
 
 namespace AO.BookKeeping.Controllers
 {
     public class HomeController : Controller
     {
+        private InvoiceContext _invoiceContext;
+
+        public HomeController(InvoiceContext invoiceContext)
+        {
+            _invoiceContext = invoiceContext;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -46,16 +49,37 @@ namespace AO.BookKeeping.Controllers
                 }
 
                 ReconciliationService service = new ReconciliationService();
-
-                List<ReconciliationItem> reconciliationItems = await service.GetReconciliationItems(reconciliationFile);
+                DateTime fromDate = DateTime.MinValue, toDate = DateTime.MaxValue;
+                List<ReconciliationItem> reconciliationItems = service.GetReconciliationItems(reconciliationFile, ref fromDate, ref toDate);
                 if (reconciliationItems == null || reconciliationItems.Count == 0)
                 {
                     ViewData["Message"] = "Ingen rækker fundet i korrekt format";
                     return View("Error");
                 }
 
+
+                var invoices = _invoiceContext.Invoices
+                    .Select(i => new Invoice
+                    {
+                        DiscountAmount = i.DiscountAmount,
+                        Id = i.Id,
+                        InvoiceDate = i.InvoiceDate,
+                        OrderId = i.OrderId,
+                        PaymentDate = i.PaymentDate,
+                        ShipmentCost = i.ShipmentCost,
+                        TotalPrice = i.TotalPrice,
+                        UserEmailAddress = i.UserEmailAddress,
+                        UserPresentationName = i.UserPresentationName
+                    })
+                    .Where(i => i.InvoiceDate >= fromDate && i.InvoiceDate <= toDate)
+                    .OrderByDescending(i => i.Id)
+                    .ToList();
+
+                List<Invoice> notPayedInvoices = service.Reconcilidate(reconciliationItems, invoices);
+
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorViewModel model = new ErrorViewModel();
                 model.ErrorText = ex.Message;

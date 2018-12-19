@@ -13,6 +13,6 @@ namespace AO.BookKeeping.Data.Contexts
 
         }
 
-        public DbSet<Invoice> InvoiceItems { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
     }
 }
