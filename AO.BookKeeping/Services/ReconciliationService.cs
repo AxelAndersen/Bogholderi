@@ -121,7 +121,7 @@ namespace AO.BookKeeping.Services
                 }
                 else
                 {
-                    model.ReconsiledItems++;
+                    model.ReconsiledItemsCount++;
                 }
             }
 
@@ -134,7 +134,7 @@ namespace AO.BookKeeping.Services
             {
                 int orderId = GetOrderId(item.ItemInfo);
                 if(orderId <= 0)
-                {
+                {                    
                     continue;
                 }
 
@@ -144,6 +144,10 @@ namespace AO.BookKeeping.Services
                     if(invoice.TotalPrice == item.Amount)
                     {
                         return true;
+                    }
+                    else
+                    {
+                        invoice.ErrorText = "Beløbene er ikke ens!<br />Fakturabeløb: " + invoice.TotalPrice + "<br />Betalt beløb: " + item.Amount + "<br />" + item.ItemInfo;
                     }
                 }                
             }

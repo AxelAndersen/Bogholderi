@@ -9,6 +9,8 @@ namespace AO.BookKeeping.Models
     public class ResultModel
     {
         public List<Invoice> NotPayedInvoices { get; set; }
-        public int ReconsiledItems { get; set; }        
+        public int ReconsiledItemsCount { get; set; }
+        public string ReconsiledItemsPresentation { get; set; }
+        public string ResultHeader { get; set; }
     }
 }

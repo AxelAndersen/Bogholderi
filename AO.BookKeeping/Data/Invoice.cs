@@ -17,5 +17,6 @@ namespace AO.BookKeeping.Data
         public decimal? ShipmentCost { get; set; }
         public decimal? Vat { get; set; }
         public decimal? TotalPrice { get; set; }
+        public string ErrorText { get; set; }
     }
 }
