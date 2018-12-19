@@ -5,16 +5,18 @@
 <h3>@ViewData["Message"]</h3>
 
 <div>
-    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="UploadFile">
+    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="DoReconciliation">
         <div class="form-group">
             <div class="col-md-10">
-                <p>Upload one or more files using this form:</p>
+                <p>Vælg excel fil til afstemning</p>
                 <input type="file" name="reconciliationFile" />
             </div>
         </div>
+        <br /><br />
+        <br />
         <div class="form-group">
             <div class="col-md-10">
-                <input type="submit" value="Upload" />
+                <input type="submit" value="Start afstemning" />
             </div>
         </div>
     </form>
