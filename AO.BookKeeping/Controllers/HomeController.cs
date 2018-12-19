@@ -51,6 +51,7 @@ namespace AO.BookKeeping.Controllers
                 ReconciliationService service = new ReconciliationService();
                 DateTime fromDate = DateTime.MinValue, toDate = DateTime.MaxValue;
                 List<ReconciliationItem> reconciliationItems = service.GetReconciliationItems(reconciliationFile, ref fromDate, ref toDate);
+                reconciliationFile = null;
                 if (reconciliationItems == null || reconciliationItems.Count == 0)
                 {
                     ViewData["Message"] = "Ingen rækker fundet i korrekt format";
@@ -75,9 +76,9 @@ namespace AO.BookKeeping.Controllers
                     .OrderByDescending(i => i.Id)
                     .ToList();
 
-                List<Invoice> notPayedInvoices = service.Reconcilidate(reconciliationItems, invoices);
+                 ResultModel resultModel = service.Reconcilidate(reconciliationItems, invoices);
 
-
+                return View("ReconciliationResult", resultModel);
             }
             catch (Exception ex)
             {
@@ -85,8 +86,6 @@ namespace AO.BookKeeping.Controllers
                 model.ErrorText = ex.Message;
                 return View("Error", model);
             }
-
-            return Ok("Ok");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

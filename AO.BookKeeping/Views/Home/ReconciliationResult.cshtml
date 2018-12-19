@@ -1,0 +1,29 @@
+﻿@model ResultModel
+@{
+    ViewData["Title"] = "Resultat";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+@Model.ReconsiledItems
+
+<h3>Ingen betalinger fundet for nedenstående fakturarer (@Model.NotPayedInvoices.Count):</h3>
+    @foreach (var invoice in Model.NotPayedInvoices)
+        {
+            <div class="form-group">
+                <div class="col-md-2">
+                    Fakturanummer:&nbsp;@invoice.Id
+                </div>
+                <div class="col-md-2">
+                    Ordrenummer:&nbsp;@invoice.OrderId
+                </div>
+                <div class="col-md-8">
+                    Totalpris:&nbsp;@invoice.TotalPrice
+                </div>
+                <div style="clear:both;"></div>
+                <hr />
+            </div>
+        }
+
+<br /><br/>
+<hr />

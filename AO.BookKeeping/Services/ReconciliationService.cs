@@ -18,8 +18,9 @@ namespace AO.BookKeeping.Services
             List<ReconciliationItem> reconciliationItems = new List<ReconciliationItem>();
 
             var filePath = Path.GetTempPath();
-            SaveFile(reconciliationFile, filePath);
-            AddToList(reconciliationFile, reconciliationItems, filePath);
+            string completeFileName = filePath + "_" + DateTime.Now.Ticks + "-" + reconciliationFile.FileName;
+            SaveFile(reconciliationFile, completeFileName);
+            AddToList(completeFileName, reconciliationItems, filePath);            
 
             fromDate = _fromDate;
             toDate = _toDate;
@@ -27,13 +28,18 @@ namespace AO.BookKeeping.Services
             return reconciliationItems;
         }
 
-        private void AddToList(IFormFile reconciliationFile, List<ReconciliationItem> reconciliationItems, string filePath)
+        private void AddToList(string completeFileName, List<ReconciliationItem> reconciliationItems, string filePath)
         {
             string errorMessage = string.Empty;
 
-            FileInfo file = new FileInfo(Path.Combine(filePath, reconciliationFile.FileName));
+            FileInfo file = new FileInfo(Path.Combine(filePath, completeFileName));
             using (ExcelPackage package = new ExcelPackage(file))
             {
+                if(package.Workbook.Worksheets.Count == 0)
+                {
+                    throw new Exception("Fejl ved indlæsning af excel ark. Prøv igen forfra");
+                }
+
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
 
                 int rowCount = worksheet.Dimension.Rows;
@@ -64,7 +70,7 @@ namespace AO.BookKeeping.Services
                     }
                     reconciliationItems.Add(item);
                 }
-            }
+            }            
         }
 
         private string ValidateCells(ExcelRange cells, int row)
@@ -91,20 +97,77 @@ namespace AO.BookKeeping.Services
             return string.Empty;
         }
 
-        private void SaveFile(IFormFile reconciliationFile, string filePath)
+        private void SaveFile(IFormFile reconciliationFile, string fullfileNamePath)
         {
             if (reconciliationFile.Length > 0)
             {
-                using (var stream = new FileStream(filePath + reconciliationFile.FileName, FileMode.Create))
+                using (var stream = new FileStream(fullfileNamePath, FileMode.Create))
                 {
-                    reconciliationFile.CopyToAsync(stream);
+                    reconciliationFile.CopyTo(stream);
                 }
             }
         }
 
-        internal List<Invoice> Reconcilidate(List<ReconciliationItem> reconciliationItems, List<Invoice> invoices)
+        internal ResultModel Reconcilidate(List<ReconciliationItem> reconciliationItems, List<Invoice> invoices)
         {
-            throw new NotImplementedException();
+            ResultModel model = new ResultModel();            
+            model.NotPayedInvoices = new List<Invoice>();
+
+            foreach (Invoice invoice in invoices)
+            {
+                if(IsPayed(invoice, reconciliationItems) == false)
+                {
+                    model.NotPayedInvoices.Add(invoice);
+                }
+                else
+                {
+                    model.ReconsiledItems++;
+                }
+            }
+
+            return model;
+        }
+
+        private bool IsPayed(Invoice invoice, List<ReconciliationItem> reconciliationItems)
+        {
+            foreach(ReconciliationItem item in reconciliationItems)
+            {
+                int orderId = GetOrderId(item.ItemInfo);
+                if(orderId <= 0)
+                {
+                    continue;
+                }
+
+                if(orderId == invoice.OrderId)
+                {
+                    // Found a match, lets see if the amounts are the same
+                    if(invoice.TotalPrice == item.Amount)
+                    {
+                        return true;
+                    }
+                }                
+            }
+
+            return false;
+        }
+
+        private int GetOrderId(string itemInfo)
+        {            
+            if(itemInfo.StartsWith("DK-IND") == false)
+            {
+                // we only do this for these specifics
+                return 0;
+            }
+
+            if (itemInfo.Contains("Reference") == false)
+            {
+                // we only do this for these specifics
+                return 0;
+            }
+
+            string orderId = itemInfo.Substring(itemInfo.IndexOf("Reference") + 9).Trim();
+            orderId = orderId.Substring(7);
+            return Convert.ToInt32(orderId);        
         }
     }
 }
