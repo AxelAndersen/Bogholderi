@@ -159,7 +159,7 @@ namespace AO.BookKeeping.Services
                     }
                     else
                     {
-                        invoice.ErrorText = "Beløbene er ikke ens!<br />Fakturabeløb: " + invoice.TotalPrice + "<br />Betalt beløb: " + item.Amount + "<br />" + item.ItemInfo;
+                        invoice.ErrorText = "Er betalt, men beløbene er ikke ens!<br />Fakturabeløb: " + invoice.TotalPrice + "<br />Betalt beløb: " + item.Amount + "<br />" + item.BankDay.ToShortDateString() + "  - "  + item.ItemInfo;
                     }
                 }                
             }

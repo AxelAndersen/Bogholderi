@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Andersen Outdoor ApS</title>
+    <title>Andersen Outdoor ApS - @ViewData["Title"]</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -18,21 +18,27 @@
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">       
+        <div class="container">
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Forside</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Reconciliation">Afstemning</a></li>                    
+                    <li><a asp-area="" asp-controller="Home" asp-action="Reconciliation">Bogholderi</a></li>
                 </ul>
             </div>
         </div>
-    </nav>
-
+    </nav>    
     <div class="container body-content">
-        @RenderBody()
+        <div class="col-md-9">
+            <h1>Andersen Outdoor ApS</h1>
+        </div>
+        <div style="clear:both;"></div>
+        <hr />
+        <div class="RenderbodyContainer">
+            @RenderBody()
+        </div>
         <hr />
         <footer>
-            <p>&copy; 2019 - Afstemning - Andersen Outdoor ApS</p>
+            <p>&copy; 2019 - Andersen Outdoor ApS</p>
         </footer>
     </div>
 

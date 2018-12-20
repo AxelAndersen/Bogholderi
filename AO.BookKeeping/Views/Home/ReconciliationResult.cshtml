@@ -5,6 +5,7 @@
 <style type="text/css">
     .fromGroup { margin-bottom: 4px; }
     .priceDiv { text-align: right; }
+    .errorText { padding: 8px 0 4px 24px; }
     hr { margin-top: 4px; margin-bottom: 4px; }
 </style>
 <h2>@Model.ResultHeader</h2>
@@ -34,6 +35,9 @@
     @foreach (var invoice in Model.NotPayedInvoices)
     {
         <div class="col-md-2">
+            Fakturadato:&nbsp;@invoice.InvoiceDate.Value.ToShortDateString()
+        </div>
+        <div class="col-md-2">
             Fakturanummer:&nbsp;@invoice.Id
         </div>
         <div class="col-md-2">
@@ -43,9 +47,9 @@
             Totalpris:
         </div>
         <div class="col-md-1 priceDiv">
-            @invoice.TotalPrice
+            @invoice.TotalPrice.Value.ToString("N2")
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 errorText">
             @Html.Raw(@invoice.ErrorText)
         </div>
         <div style="clear:both;"></div>
