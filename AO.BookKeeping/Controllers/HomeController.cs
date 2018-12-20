@@ -83,6 +83,7 @@ namespace AO.BookKeeping.Controllers
                 resultModel.ResultHeader = "Resultat for perioden: " + fromDate.ToShortDateString() + " til " + toDate.ToShortDateString();
                 resultModel.ReconsiledItemsPresentation = resultModel.ReconsiledItemsCount.ToString("N0");
                 HttpContext.Session.SetString("CompleteFileName", completeFileName);
+                resultModel.CompleteFileName = completeFileName;
 
                 return View("ReconciliationResult", resultModel);
             }
@@ -92,7 +93,8 @@ namespace AO.BookKeeping.Controllers
             }
         }
 
-        public async Task<IActionResult> ReconciliationPrintFriendly()
+        [HttpPost]
+        public async Task<IActionResult> ReconciliationPrintFriendly(ResultModel ResultModel)
         {
             try
             {
@@ -100,9 +102,14 @@ namespace AO.BookKeeping.Controllers
 
                 if (string.IsNullOrEmpty(completeFileName))
                 {
+                    completeFileName = ResultModel.CompleteFileName;                   
+                }
+
+                if (string.IsNullOrEmpty(completeFileName))
+                {                    
                     return HandleError("Ingen fil fundet, start venligst forfra");
                 }
-   
+
                 ReconciliationService service = new ReconciliationService();
                 DateTime fromDate = DateTime.MinValue, toDate = DateTime.MaxValue;
       
@@ -132,7 +139,7 @@ namespace AO.BookKeeping.Controllers
 
                 ResultModel resultModel = service.Reconcilidate(reconciliationItems, invoices);
                 resultModel.ResultHeader = "Resultat for perioden: " + fromDate.ToShortDateString() + " til " + toDate.ToShortDateString();
-                resultModel.ReconsiledItemsPresentation = resultModel.ReconsiledItemsCount.ToString("N0");               
+                resultModel.ReconsiledItemsPresentation = resultModel.ReconsiledItemsCount.ToString("N0");              
 
                 return View("ReconciliationPrintResult", resultModel);
             }

@@ -12,10 +12,11 @@
 <h3>@ViewData["Message"]</h3>
 <hr />
 
-<form method="post" asp-controller="Home" asp-action="ReconciliationPrintFriendly">
+<form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="ReconciliationPrintFriendly">
     <div class="form-group">
         <div class="col-md-10">
-            <input type="submit" value="Printvenlig version" />
+            <input type="submit" value="Printvenlig version" />            
+            <input type="hidden" asp-for="CompleteFileName" />
         </div>
     </div>
 </form>
