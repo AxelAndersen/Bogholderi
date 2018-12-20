@@ -1,0 +1,71 @@
+﻿@model ResultModel
+@{
+    Layout = "_PrintLayout";
+    ViewData["Title"] = "Resultat af afstemning";
+}
+<style type="text/css">
+    .tbl { width: 800px; }
+    .td1 { width: 100px; }
+    .td2 { width: 100px; }
+    .td3 { width: 100px; text-align: right; }
+    .td4 { width: 100px; text-align: right; }
+    hr { margin-top: 6px; margin-bottom: 6px; }
+</style>
+
+<h3>@ViewData["Message"]</h3>
+
+<table border="0" class="tbl">
+    <tr>
+        <td colspan="4">
+            <h4>@Model.ReconsiledItemsPresentation&nbsp;fakturaer betalt korrekt</h4>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <hr />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <h4>Ingen eller ufuldstændige betalinger fundet for nedenstående fakturaer (@Model.NotPayedInvoices.Count&nbsp;stk.):</h4>
+        </td>
+    </tr>
+    @foreach (var invoice in Model.NotPayedInvoices)
+    {
+        <tr>
+            <td class="td1">
+                Fakturanummer:&nbsp;@invoice.Id
+            </td>
+            <td class="td2">
+                Ordrenummer:&nbsp;@invoice.OrderId
+            </td>
+            <td class="td3">
+                Totalpris:
+            </td>
+            <td class="td4">
+                @invoice.TotalPrice
+            </td>
+        </tr>
+        @if (string.IsNullOrEmpty(@invoice.ErrorText) == false)
+        {
+            <tr>
+                <td colspan="4">
+                    @Html.Raw(@invoice.ErrorText)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <hr />
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">
+                    <hr />
+                </td>
+            </tr>
+        }
+    }
+</table>

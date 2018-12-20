@@ -13,14 +13,14 @@ namespace AO.BookKeeping.Services
     {
         private DateTime _fromDate = DateTime.MinValue, _toDate = DateTime.MaxValue;
 
-        public List<ReconciliationItem> GetReconciliationItems(IFormFile reconciliationFile, ref DateTime fromDate, ref DateTime toDate)
+        public List<ReconciliationItem> GetReconciliationItems(IFormFile reconciliationFile, ref DateTime fromDate, ref DateTime toDate, ref string completeFileName)
         {
             List<ReconciliationItem> reconciliationItems = new List<ReconciliationItem>();
 
             var filePath = Path.GetTempPath();
-            string completeFileName = filePath + "_" + DateTime.Now.Ticks + "-" + reconciliationFile.FileName;
+            completeFileName = filePath + "_" + DateTime.Now.Ticks + "-" + reconciliationFile.FileName;
             SaveFile(reconciliationFile, completeFileName);
-            AddToList(completeFileName, reconciliationItems, filePath);            
+            AddToList(completeFileName, reconciliationItems);            
 
             fromDate = _fromDate;
             toDate = _toDate;
@@ -28,11 +28,23 @@ namespace AO.BookKeeping.Services
             return reconciliationItems;
         }
 
-        private void AddToList(string completeFileName, List<ReconciliationItem> reconciliationItems, string filePath)
+        public List<ReconciliationItem> GetReconciliationItemsForPrint(ref DateTime fromDate, ref DateTime toDate, string completeFileName)
+        {
+            List<ReconciliationItem> reconciliationItems = new List<ReconciliationItem>();
+
+            AddToList(completeFileName, reconciliationItems);
+
+            fromDate = _fromDate;
+            toDate = _toDate;
+
+            return reconciliationItems;
+        }
+
+        private void AddToList(string completeFileName, List<ReconciliationItem> reconciliationItems)
         {
             string errorMessage = string.Empty;
 
-            FileInfo file = new FileInfo(Path.Combine(filePath, completeFileName));
+            FileInfo file = new FileInfo(completeFileName);
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 if(package.Workbook.Worksheets.Count == 0)

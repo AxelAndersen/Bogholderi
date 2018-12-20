@@ -3,12 +3,23 @@
     ViewData["Title"] = "Resultat af afstemning";
 }
 <style type="text/css">
-    .fromGroup{ margin-bottom: 4px; }
-    .priceDiv{ text-align:right; }
-    hr{ margin-top: 4px; margin-bottom: 4px; }
+    .fromGroup { margin-bottom: 4px; }
+    .priceDiv { text-align: right; }
+    hr { margin-top: 4px; margin-bottom: 4px; }
 </style>
 <h2>@Model.ResultHeader</h2>
 <h3>@ViewData["Message"]</h3>
+<hr />
+
+<form method="post" asp-controller="Home" asp-action="ReconciliationPrintFriendly">
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" value="Printvenlig version" />
+        </div>
+    </div>
+</form>
+<div style="clear:both;"></div>
+<br />
 <hr />
 <div class="form-group">
     <div class="col-md-10">
@@ -16,13 +27,12 @@
     </div>
 </div>
 <div style="clear:both;"></div>
-    <hr />
-    <h4>Ingen eller ufuldstændige betalinger fundet for nedenstående fakturaer (@Model.NotPayedInvoices.Count&nbsp;stk.):</h4>
-    <br />
-    <div class="form-group">
-        @foreach (var invoice in Model.NotPayedInvoices)
-        {
-
+<hr />
+<h4>Ingen eller ufuldstændige betalinger fundet for nedenstående fakturaer (@Model.NotPayedInvoices.Count&nbsp;stk.):</h4>
+<br />
+<div class="form-group">
+    @foreach (var invoice in Model.NotPayedInvoices)
+    {
         <div class="col-md-2">
             Fakturanummer:&nbsp;@invoice.Id
         </div>
@@ -40,8 +50,7 @@
         </div>
         <div style="clear:both;"></div>
         <hr />
-
-            }
-    </div>
-    <br /><br />
-    <hr />
+    }
+</div>
+<br /><br />
+<hr />
